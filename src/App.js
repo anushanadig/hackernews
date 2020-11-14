@@ -1,4 +1,4 @@
-import React,{useDebugValue, useEffect, useState} from 'react';
+import React,{ useEffect, useState} from 'react';
 import SearchHeader from './components/SearchHeader'
 import Posts from './components/Posts';
 import Filter from './components/Filter';
@@ -15,7 +15,7 @@ function App() {
   const [noResults, setNoResults] = useState(false);
 
   useEffect(()=>{
-    fetchStories(searchTerm);
+    fetchStories('');
   },[])
 
   const fetchStories = async (term) => {
