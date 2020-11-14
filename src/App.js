@@ -1,11 +1,11 @@
-import React,{useDebugValue, useState} from 'react';
+import React,{useDebugValue, useEffect, useState} from 'react';
 import SearchHeader from './components/SearchHeader'
-import Posts from './components/Posts'
+import Posts from './components/Posts';
+import Filter from './components/Filter';
 
 function App() {
 
-  // Hackernews API endpoint
-  const URL = 'https://hn.algolia.com/api/v1/search?query=';
+  const URL = 'https://hn.algolia.com/api/v1/search?query='; 
 
   const [searchTerm,setSearchTerm] = useState('');
   const [loading,setLoading] = useState(false);
@@ -14,11 +14,14 @@ function App() {
   const [filterTerm, setFilterTerm] = useState('');
   const [noResults, setNoResults] = useState(false);
 
-  const onSearchSubmit = async (e) => {
-    e.preventDefault();
+  useEffect(()=>{
+    fetchStories(searchTerm);
+  },[])
+
+  const fetchStories = async (term) => {
     setLoading(true);
     try{
-      let response = await fetch(`${URL}${searchTerm}`);
+      let response = await fetch(`${URL}${term}`);
       response = await response.json();
       setLoading(false);
       setResponse(response.hits);
@@ -29,6 +32,17 @@ function App() {
     }
   }
 
+  const onSearchSubmit = (event) => {
+		event.preventDefault();
+		
+		fetchStories(searchTerm);
+	}
+
+  const onDismiss = (objectID) => {
+    const filteredResponse = response.filter(item => item.objectID !== objectID);
+    setResponse(filteredResponse); 
+  }
+
   return (
     <div className="App">
       <SearchHeader 
@@ -37,12 +51,23 @@ function App() {
         onSearchSubmit={onSearchSubmit}
       />
 
-      <Posts 
+    {
+      !hasError && !noResults && (
+        <Filter 
+        filterTerm={filterTerm}
+        onFilterTermChange={(event) => setFilterTerm(event.target.value) }
+        />
+      )
+    }
+
+    <Posts 
         response={response} 
         loading={loading} 
         filterTerm={filterTerm}
         noResults={noResults}
-      />
+        onDismiss={onDismiss}
+        hasError={hasError}
+    />  
     </div>
   );
 }

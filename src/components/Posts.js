@@ -1,6 +1,7 @@
 import React from 'react';
 import Loader from 'react-loader-spinner';
 import Post from './Post';
+import Error from './Error';
 
 function Posts(props) {
 	const { response, filterTerm, onDismiss, loading, noResults, hasError } = props;
@@ -15,26 +16,26 @@ function Posts(props) {
 
 	if (hasError) {
 		return (
-			<div>
+			<Error>
 				Something went wrong :( Failed to fetch data from Hackernews API. Please
 				check your internet connection.
-			</div>
+			</Error>
 		);
 	}
 
 	if (noResults) {
 		return (
-			<div>
+			<Error>
 				No results found. Please try again with different keywords.
-			</div>
+			</Error>
 		);
 	}
 
 	return (
-		<div className="table">
+		<div className="posts">
 			{response.filter(filterSearchResults(filterTerm)).map(item => {
 				return (
-					<div key={item.objectID} className="table-row">
+					<div key={item.objectID} className="post-row">
 						<Post item={item} onDismiss={onDismiss} />
 					</div>
 				);
@@ -49,7 +50,7 @@ function filterSearchResults(filterTerm) {
 		return item =>
 			item?.title?.toLowerCase().includes(filterTerm.toLowerCase());
 	} else {
-		return item => !!item.title;
+		return item => !!item.title && !!item.url;
 	}
 }
 
