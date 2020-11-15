@@ -1,3 +1,5 @@
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react'
 import React from 'react';
 import Loader from 'react-loader-spinner';
 import Post from './Post';
@@ -6,9 +8,16 @@ import Error from './Error';
 function Posts(props) {
 	const { response, filterTerm, onDismiss, loading, noResults, hasError } = props;
 
+	const postRow = css`
+	padding: 2rem;
+	border: none;
+	position: relative;`
+
 	if (loading) {
 		return (
-			<div className="loader">
+			<div css={{
+				textAlign: 'center'
+			  }}>
 				<Loader type="Rings" color="#d3d3d3" height={500} width={500} />
 			</div>
 		);
@@ -32,10 +41,10 @@ function Posts(props) {
 	}
 
 	return (
-		<div className="posts">
+		<div css={{margin: '3rem 0'}}>
 			{response.filter(filterSearchResults(filterTerm)).map(item => {
 				return (
-					<div key={item.objectID} className="post-row">
+					<div key={item.objectID} css={postRow}>
 						<Post item={item} onDismiss={onDismiss} />
 					</div>
 				);
